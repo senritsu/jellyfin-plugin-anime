@@ -11,9 +11,26 @@ This plugin is built with .NET Core to download metadata for anime.
 
 2. Ensure you have .NET Core SDK setup and installed
 
-3. Build plugin with following command.
+3. Build plugin project using either your IDE or the CLI. As an example, the following can be used for a Release build:
 
 ```sh
-dotnet publish --configuration Release --output bin
+dotnet build --configuration Release
 ```
-4. Place the resulting file in the `plugins` folder under the program data directory or inside the portable install directory
+
+On build, the project automatically copies all relevant plugin files to the `plugin` folder in the repository root.
+
+4. Copy the contents of the `plugin` folder (at the repo root) to the `plugins` folder of your Jellyfin installation, under the program data directory or inside the portable install directory
+
+### Copy automation for development
+
+Step 4 can be automated by adding a `Jellyfin.Plugin.Anime.csproj.user` file to the project folder, to copy the published dlls directly to the correct folder for your local Jellyfin server.
+
+```xml
+<?xml version="1.0"?> 
+<Project>
+    <PropertyGroup>
+        <!-- NOTE The following property will deploy the plugin to the config folder of your running Jellyfin install, for easier testing. This way you don't have to copy files manually, and a simple server restart is sufficient. -->
+        <BinaryPluginOutputFolder>PATH_TO_YOUR_JELLYFIN_CONFIG_FOLDER\plugins</BinaryPluginOutputFolder>-->
+    </PropertyGroup>
+</Project>
+```

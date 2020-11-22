@@ -5,9 +5,11 @@
     <RootNamespace>Jellyfin.Plugin.Anime</RootNamespace>
     <AssemblyVersion>10.0.0.0</AssemblyVersion>
     <FileVersion>10.0.0.0</FileVersion>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AnitomySharp.NETStandard" Version="0.3.0-beta.1" />
     <PackageReference Include="Jellyfin.Controller" Version="10.6.0" />
   </ItemGroup>
 
@@ -15,5 +17,19 @@
     <None Remove="Configuration\configPage.html" />
     <EmbeddedResource Include="Configuration\configPage.html" />
   </ItemGroup>
+  
+  <PropertyGroup>
+    <BinaryPluginOutputFolder>$(SolutionDir)\plugin</BinaryPluginOutputFolder>
+  </PropertyGroup>
+
+  <Target Name="CopyPlugin" AfterTargets="Build">
+    <ItemGroup>
+      <BinaryPluginFile Include="$(OutDir)\Jellyfin.Plugin.Anime.dll" />
+      <BinaryPluginFile Include="$(OutDir)\AnitomySharp.dll" />
+    </ItemGroup>
+    <Copy
+            SourceFiles="@(BinaryPluginFile)"
+            DestinationFolder="$(BinaryPluginOutputFolder)\Anime" />
+  </Target>
 
 </Project>
