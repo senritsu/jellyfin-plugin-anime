@@ -11,5 +11,6 @@ description: >
 category: "Metadata"
 artifacts:
 - "Jellyfin.Plugin.Anime.dll"
+- "AnitomySharp.dll"
 changelog: >
   changelog
