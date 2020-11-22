@@ -62,24 +62,17 @@ namespace Jellyfin.Plugin.Anime.Providers.AniList
         /// <returns></returns>
         public string GetPreferredTitle(string language)
         {
-            PluginConfiguration config = Plugin.Instance.Configuration;
-            if (config.TitlePreference == TitlePreferenceType.Localized)
+            var config = Plugin.Instance.Configuration;
+            
+            return config.TitlePreference switch
             {
-                if (language == "en")
-                {
-                    return this.title.english;
-                }
-                if (language == "jap")
-                {
-                    return this.title.native;
-                }
-            }
-            if (config.TitlePreference == TitlePreferenceType.Japanese)
-            {
-                return this.title.native;
-            }
-
-            return this.title.romaji;
+                TitlePreferenceType.Localized when language == "en" => this.title.english,
+                // TODO make this useful, currently all method calls have hardcoded language "en"
+                TitlePreferenceType.Localized when language == "jap" => this.title.native,
+                TitlePreferenceType.Japanese => this.title.native,
+                TitlePreferenceType.JapaneseRomaji => this.title.romaji,
+                _ => throw new ArgumentOutOfRangeException(nameof(config.TitlePreference))
+            };
         }
 
         /// <summary>
