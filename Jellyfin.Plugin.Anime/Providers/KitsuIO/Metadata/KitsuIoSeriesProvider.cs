@@ -32,7 +32,9 @@ namespace Jellyfin.Plugin.Anime.Providers.KitsuIO.Metadata
         
         public async Task<IEnumerable<RemoteSearchResult>> GetSearchResults(SeriesInfo searchInfo, CancellationToken cancellationToken)
         {
-            var filters = GetFiltersFromSeriesInfo(searchInfo);
+            var anitomyName = AnitomyAdapter.ParseSeriesName(searchInfo);
+            
+            var filters = BuildSearchFilters(anitomyName, searchInfo.Year);
             var searchResults = await KitsuIoApi.Search_Series(filters);
             var results = new List<RemoteSearchResult>();
 
@@ -61,10 +63,14 @@ namespace Jellyfin.Plugin.Anime.Providers.KitsuIO.Metadata
             var kitsuId = info.ProviderIds.GetOrDefault(ProviderNames.KitsuIo);
             if (string.IsNullOrEmpty(kitsuId))
             {
-                _log.LogInformation("Start KitsuIo... Searching({Name})", info.Name);
-                var filters = GetFiltersFromSeriesInfo(info);
+                var anitomyName = AnitomyAdapter.ParseSeriesName(info);
+                
+                _log.LogInformation("Start KitsuIo... Searching({Name})", anitomyName);
+                var filters = BuildSearchFilters(anitomyName, info.Year);
                 var apiResponse = await KitsuIoApi.Search_Series(filters);
-                kitsuId = apiResponse.Data.FirstOrDefault(x => x.Attributes.Titles.Equal(info.Name))?.Id.ToString();
+                
+                // TODO replace strict name equality with fuzzy matching
+                kitsuId = apiResponse.Data.FirstOrDefault(x => x.Attributes.Titles.Equal(anitomyName))?.Id.ToString();
             }
 
             if (!string.IsNullOrEmpty(kitsuId))
@@ -99,10 +105,10 @@ namespace Jellyfin.Plugin.Anime.Providers.KitsuIO.Metadata
             });
         }
         
-        private Dictionary<string, string> GetFiltersFromSeriesInfo(SeriesInfo seriesInfo)
+        private Dictionary<string, string> BuildSearchFilters(string name, int? year)
         {
-            var filters = new Dictionary<string, string> {{"text", HttpUtility.UrlEncode(seriesInfo.Name)}};
-            if(seriesInfo.Year.HasValue) filters.Add("seasonYear", HttpUtility.UrlEncode(seriesInfo.Year.ToString()));
+            var filters = new Dictionary<string, string> {{"text", HttpUtility.UrlEncode(name)}};
+            if(year.HasValue) filters.Add("seasonYear", HttpUtility.UrlEncode(year.ToString()));
             return filters;
         }
         

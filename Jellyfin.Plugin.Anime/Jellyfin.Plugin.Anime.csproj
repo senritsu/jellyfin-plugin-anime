@@ -27,9 +27,7 @@
       <BinaryPluginFile Include="$(OutDir)\Jellyfin.Plugin.Anime.dll" />
       <BinaryPluginFile Include="$(OutDir)\AnitomySharp.dll" />
     </ItemGroup>
-    <Copy
-            SourceFiles="@(BinaryPluginFile)"
-            DestinationFolder="$(BinaryPluginOutputFolder)\Anime" />
+    <Copy SourceFiles="@(BinaryPluginFile)" DestinationFolder="$(BinaryPluginOutputFolder)\Anime" />
   </Target>
 
 </Project>

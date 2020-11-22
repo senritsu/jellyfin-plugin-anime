@@ -45,8 +45,10 @@ namespace Jellyfin.Plugin.Anime.Providers.AniList
             }
             else
             {
-                _log.LogInformation("Start AniList... Searching({Name})", info.Name);
-                MediaSearchResult msr = await _aniListApi.Search_GetSeries(info.Name, cancellationToken);
+                var anitomyName = AnitomyAdapter.ParseSeriesName(info);
+                
+                _log.LogInformation("Start AniList... Searching({Name})", anitomyName);
+                MediaSearchResult msr = await _aniListApi.Search_GetSeries(anitomyName, cancellationToken);
                 if (msr != null)
                 {
                     media = await _aniListApi.GetAnime(msr.id.ToString());

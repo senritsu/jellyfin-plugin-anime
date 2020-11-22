@@ -62,12 +62,15 @@ namespace Jellyfin.Plugin.Anime.Providers.AniDB.Metadata
             var result = new MetadataResult<Series>();
 
             var aid = info.ProviderIds.GetOrDefault(ProviderNames.AniDb);
-            if (string.IsNullOrEmpty(aid) && !string.IsNullOrEmpty(info.Name))
+            
+            var anitomyName = AnitomyAdapter.ParseSeriesName(info);
+            
+            if (string.IsNullOrEmpty(aid) && !string.IsNullOrEmpty(anitomyName))
             {
-                aid = await Equals_check.Fast_xml_search(info.Name, info.Name, cancellationToken, true);
+                aid = await Equals_check.Fast_xml_search(anitomyName, anitomyName, cancellationToken, true);
                 if (string.IsNullOrEmpty(aid))
                 {
-                    aid = await Equals_check.Fast_xml_search(await Equals_check.Clear_name(info.Name, cancellationToken), await Equals_check.Clear_name(info.Name, cancellationToken), cancellationToken, true);
+                    aid = await Equals_check.Fast_xml_search(await Equals_check.Clear_name(anitomyName, cancellationToken), await Equals_check.Clear_name(anitomyName, cancellationToken), cancellationToken, true);
                 }
             }
 

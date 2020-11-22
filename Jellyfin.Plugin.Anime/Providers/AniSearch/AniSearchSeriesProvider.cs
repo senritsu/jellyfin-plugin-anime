@@ -36,8 +36,11 @@ namespace Jellyfin.Plugin.Anime.Providers.AniSearch
             var aid = info.ProviderIds.GetOrDefault(ProviderNames.AniSearch);
             if (string.IsNullOrEmpty(aid))
             {
-                _log.LogInformation("Start AniSearch... Searching({Name})", info.Name);
-                aid = await AniSearchApi.FindSeries(info.Name, cancellationToken);
+                var anitomyName = AnitomyAdapter.ParseSeriesName(info);
+                
+                _log.LogInformation("Start AniSearch... Searching({Name})", anitomyName);
+
+                aid = await AniSearchApi.FindSeries(anitomyName, cancellationToken);
             }
 
             if (!string.IsNullOrEmpty(aid))
@@ -75,7 +78,9 @@ namespace Jellyfin.Plugin.Anime.Providers.AniSearch
 
             if (!string.IsNullOrEmpty(searchInfo.Name))
             {
-                List<string> ids = await AniSearchApi.Search_GetSeries_list(searchInfo.Name, cancellationToken);
+                var anitomyName = AnitomyAdapter.ParseSeriesName(searchInfo);
+                
+                List<string> ids = await AniSearchApi.Search_GetSeries_list(anitomyName, cancellationToken);
                 foreach (string a in ids)
                 {
                     results.Add(a, await AniSearchApi.GetAnime(a));
